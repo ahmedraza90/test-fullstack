@@ -12,7 +12,7 @@ const AddStudentSchema = z.object({
         // Academic Info
         class: z.string().min(1, "Class is required"),
         section: z.string().optional(),
-        roll: z.number().min(1, "Roll is required"),
+        roll: z.string().min(1, "Roll is required"), // Changed from number to string
         admissionDate: z.string().min(1, "Admission date is required"),
 
         // Address Info
@@ -45,7 +45,7 @@ const UpdateStudentSchema = z.object({
         // Academic Info
         class: z.string().min(1, "Class is required"),
         section: z.string().optional(),
-        roll: z.number().min(1, "Roll is required"),
+        roll: z.string().min(1, "Roll is required"), // Changed from number to string
         admissionDate: z.string().min(1, "Admission date is required"),
 
         // Address Info

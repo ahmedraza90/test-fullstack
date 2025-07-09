@@ -40,42 +40,40 @@ export const AddStudent = () => {
     try {
       console.log('🔵 Frontend: Raw form data:', JSON.stringify(data, null, 2));
 
-      const { dob, admissionDate, ...rest } = data;
+      const { dob, admissionDate, roll, ...rest } = data;
 
       const payload = {
         ...rest,
         dob: getFormattedDate(dob, API_DATE_FORMAT),
-        admissionDate: getFormattedDate(admissionDate, API_DATE_FORMAT)
+        admissionDate: getFormattedDate(admissionDate, API_DATE_FORMAT),
+        roll: roll.toString() // Ensure roll is string
       };
 
       console.log('🔵 Frontend: Processed payload:', JSON.stringify(payload, null, 2));
-      console.log('🔵 Frontend: Payload field types:', {
-        name: typeof payload.name,
-        email: typeof payload.email,
-        phone: typeof payload.phone,
-        gender: typeof payload.gender,
-        dob: typeof payload.dob,
-        class: typeof payload.class,
-        section: typeof payload.section,
-        roll: typeof payload.roll,
-        admissionDate: typeof payload.admissionDate,
-        currentAddress: typeof payload.currentAddress,
-        permanentAddress: typeof payload.permanentAddress,
-        fatherName: typeof payload.fatherName,
-        guardianName: typeof payload.guardianName,
-        guardianPhone: typeof payload.guardianPhone,
-        relationOfGuardian: typeof payload.relationOfGuardian,
-        systemAccess: typeof payload.systemAccess
-      });
+
+      // Validate required fields before sending
+      const requiredFields = [
+        'name', 'email', 'phone', 'gender', 'dob', 'class', 'roll',
+        'admissionDate', 'currentAddress', 'permanentAddress',
+        'fatherName', 'guardianName', 'guardianPhone', 'relationOfGuardian'
+      ];
+
+      const missingFields = requiredFields.filter(field => !payload[field as keyof typeof payload]);
+      if (missingFields.length > 0) {
+        console.error('🔴 Frontend: Missing required fields:', missingFields);
+        toast.error(`Missing required fields: ${missingFields.join(', ')}`);
+        return;
+      }
 
       const result = await addStudent(payload).unwrap();
       console.log('🔵 Frontend: Success response:', result);
-      toast.info(result.message);
+      toast.success(result.message);
       navigate(`/app/students`);
     } catch (error) {
       console.error('🔴 Frontend: Full error object:', error);
       console.error('🔴 Frontend: Error details:', JSON.stringify(error, null, 2));
-      toast.error(getErrorMsg(error as FetchBaseQueryError | SerializedError).message);
+      const errorMessage = getErrorMsg(error as FetchBaseQueryError | SerializedError).message;
+      toast.error(errorMessage);
     }
   };
 
