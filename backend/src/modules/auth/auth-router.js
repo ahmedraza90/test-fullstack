@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticateToken, csrfProtection, handleEmailVerificationToken, handlePasswordSetupToken, checkApiAccess } = require("../../middlewares");
 const authController = require("./auth-controller");
 const { validateRequest } = require("../../utils");
-const { LoginSchema } = require("./auth-schema");
+const { LoginSchema, AdminRegisterSchema } = require("./auth-schema");
 
 router.post("/login", validateRequest(LoginSchema), authController.handleLogin);
 router.get("/refresh", authController.handleTokenRefresh);
@@ -13,5 +13,6 @@ router.post("/setup-password", handlePasswordSetupToken, authController.handleAc
 router.post("/resend-email-verification", authenticateToken, csrfProtection, checkApiAccess, authController.handleResendEmailVerification);
 router.post("/resend-pwd-setup-link", authenticateToken, csrfProtection, checkApiAccess, authController.handleResendPwdSetupLink);
 router.post("/reset-pwd", authenticateToken, csrfProtection, checkApiAccess, authController.handlePwdReset);
+router.post("/register-admin", validateRequest(AdminRegisterSchema), authController.handleRegisterAdmin);
 
 module.exports = { authRoutes: router };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { z } from 'zod';
-import { LoginSchema, PasswordSchema, SetupPasswordSchema } from './auth-schema';
+import { LoginSchema, PasswordSchema, SetupPasswordSchema, AdminRegisterSchema } from './auth-schema';
 import { BasePermission, Permission } from '@/utils/type/misc';
 
 export type SubMenu = {
@@ -36,3 +36,5 @@ export type SetupPasswordProps = z.infer<typeof SetupPasswordSchema>;
 export type UserId = {
   userId: number;
 };
+
+export type AdminRegisterRequest = z.infer<typeof AdminRegisterSchema>;

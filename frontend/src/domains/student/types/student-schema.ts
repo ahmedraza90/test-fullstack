@@ -18,7 +18,7 @@ export const BasicInfoSchema = z.object({
 export const AcademicInfoSchema = z.object({
   class: z.string().min(1, 'Class is required'),
   section: z.string(),
-  roll: z.string().min(1, 'Roll is required'),
+  roll: z.string().min(1, 'Roll is required').transform((val) => parseInt(val, 10)),
   admissionDate: z.union([z.date(), z.string()])
 });
 

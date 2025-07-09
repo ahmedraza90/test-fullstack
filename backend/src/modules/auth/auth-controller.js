@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const { login, logout, getNewAccessAndCsrfToken, processAccountEmailVerify, processPasswordSetup, processResendEmailVerification, processResendPwdSetupLink, processPwdReset } = require("./auth-service");
+const { login, logout, getNewAccessAndCsrfToken, processAccountEmailVerify, processPasswordSetup, processResendEmailVerification, processResendPwdSetupLink, processPwdReset, registerAdmin } = require("./auth-service");
 const { setAccessTokenCookie, setCsrfTokenCookie, setAllCookies, clearAllCookies } = require("../../cookie");
 
 const handleLogin = asyncHandler(async (req, res) => {
@@ -65,6 +65,11 @@ const handlePwdReset = asyncHandler(async (req, res) => {
     res.json(message);
 });
 
+const handleRegisterAdmin = asyncHandler(async (req, res) => {
+    const result = await registerAdmin(req.body);
+    res.status(201).json(result);
+});
+
 module.exports = {
     handleLogin,
     handleLogout,
@@ -73,5 +78,6 @@ module.exports = {
     handleAccountPasswordSetup,
     handleResendEmailVerification,
     handleResendPwdSetupLink,
-    handlePwdReset
+    handlePwdReset,
+    handleRegisterAdmin
 };

@@ -44,10 +44,25 @@ const findAllStudents = async (payload) => {
 }
 
 const addOrUpdateStudent = async (payload) => {
-    const query = "SELECT * FROM student_add_update($1)";
-    const queryParams = [payload];
-    const { rows } = await processDBRequest({ query, queryParams });
-    return rows[0];
+    console.log('🔵 Repository: addOrUpdateStudent called with:', JSON.stringify(payload, null, 2));
+
+    try {
+        const query = "SELECT * FROM student_add_update($1)";
+        const queryParams = [payload];
+
+        console.log('🔵 Repository: Executing query:', query);
+        console.log('🔵 Repository: Query params:', JSON.stringify(queryParams, null, 2));
+
+        const { rows } = await processDBRequest({ query, queryParams });
+
+        console.log('🔵 Repository: Database response rows:', rows);
+
+        return rows[0];
+    } catch (error) {
+        console.error('🔴 Repository: Database error in addOrUpdateStudent:', error);
+        console.error('🔴 Repository: Error details:', error.message);
+        throw error;
+    }
 }
 
 const findStudentDetail = async (id) => {

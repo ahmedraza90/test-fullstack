@@ -2,37 +2,41 @@ import * as React from 'react';
 import { Box, Paper, Typography, Button } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
 
-import { LoginRequest, LoginSchema } from '../../types';
-import { LoginForm } from './login-form';
-import { useLoginMutation } from '../../api/auth-api';
-import { setUser } from '../../slice/auth-slice';
+import { AdminRegisterRequest, AdminRegisterSchema } from '../../types';
+import { AdminRegisterForm } from './admin-register-form';
+import { useRegisterAdminMutation } from '../../api/auth-api';
 import { formatApiError } from '@/utils/helpers/format-api-error';
 import { ApiError } from '@/components/errors';
 
-export const LoginPage = () => {
+export const AdminRegisterPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const methods = useForm<LoginRequest>({ resolver: zodResolver(LoginSchema) });
+  const methods = useForm<AdminRegisterRequest>({ resolver: zodResolver(AdminRegisterSchema) });
   const [apiErrors, setApiErrors] = React.useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = React.useState<string>('');
 
-  const [login, { isLoading }] = useLoginMutation();
+  const [registerAdmin, { isLoading }] = useRegisterAdminMutation();
 
-  const onSubmit = async (data: LoginRequest) => {
+  const onSubmit = async (data: AdminRegisterRequest) => {
     try {
-      const user = await login(data).unwrap();
-      if (user) {
-        dispatch(setUser({ user }));
-        navigate('/app');
+      setApiErrors([]);
+      setSuccessMessage('');
+      const result = await registerAdmin(data).unwrap();
+      if (result) {
+        setSuccessMessage(result.message);
+        methods.reset();
       }
     } catch (error) {
       const apiErrors = formatApiError(error as FetchBaseQueryError | SerializedError);
       setApiErrors(apiErrors);
     }
+  };
+
+  const handleBackToLogin = () => {
+    navigate('/auth/login');
   };
 
   return (
@@ -49,32 +53,49 @@ export const LoginPage = () => {
     >
       <Box
         sx={{
-          width: { xs: '300px', md: '400px' },
+          width: { xs: '350px', md: '450px' },
           border: '1px solid #f3f6f999',
           padding: '20px'
         }}
       >
         <Typography component='div' variant='h6'>
-          Welcome to School Admin !
+          Register New Admin
         </Typography>
         <Typography variant='subtitle1' color='text.secondary'>
-          Sign in to continue.
+          Create a new administrator account.
         </Typography>
-        <LoginForm
+        
+        {successMessage && (
+          <Box
+            sx={{
+              backgroundColor: '#d4edda',
+              border: '1px solid #c3e6cb',
+              color: '#155724',
+              padding: '12px',
+              borderRadius: '4px',
+              margin: '20px 0'
+            }}
+          >
+            <Typography variant='body2'>{successMessage}</Typography>
+          </Box>
+        )}
+
+        <AdminRegisterForm
           methods={methods}
           onSubmit={methods.handleSubmit(onSubmit)}
           isFetching={isLoading}
         />
+        
         <ApiError messages={apiErrors} />
         
         <Box sx={{ marginTop: '20px', textAlign: 'center' }}>
           <Button 
             variant='text' 
             size='small' 
-            onClick={() => navigate('/auth/register-admin')}
+            onClick={handleBackToLogin}
             sx={{ textTransform: 'none' }}
           >
-            Register New Admin
+            Back to Login
           </Button>
         </Box>
       </Box>

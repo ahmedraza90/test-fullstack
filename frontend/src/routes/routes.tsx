@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './protected-route';
 import { AppRoot } from './app-root';
 import { LoginPage, SetupPasswordPage } from '@/domains/auth/pages';
+import { AdminRegisterPage } from '@/domains/auth/pages/admin-register';
 import { DashboardPage } from '@/domains/dashboard/pages';
 import { LeaveDefine, MyLeaveRequest, PendingRequest } from '@/domains/leave/pages';
 import { EditClass, ListClasses } from '@/domains/class/pages';
@@ -35,6 +36,11 @@ export const routes = [
     path: '/auth/login',
     element: <LoginPage />,
     errorElement: <ErrorPage message='Error loading login page' />
+  },
+  {
+    path: '/auth/register-admin',
+    element: <AdminRegisterPage />,
+    errorElement: <ErrorPage message='Error loading admin registration page' />
   },
   {
     path: '/auth/setup-password/:token',

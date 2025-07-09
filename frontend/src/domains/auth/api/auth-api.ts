@@ -1,5 +1,5 @@
 import { api } from '@/api';
-import { LoginRequest, PasswordProps, SetupPasswordProps, User, UserId } from '../types';
+import { LoginRequest, PasswordProps, SetupPasswordProps, User, UserId, AdminRegisterRequest } from '../types';
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -50,6 +50,13 @@ export const authApi = api.injectEndpoints({
         method: 'POST',
         body: payload
       })
+    }),
+    registerAdmin: builder.mutation<{ message: string; userId: number }, AdminRegisterRequest>({
+      query: (payload) => ({
+        url: `/auth/register-admin`,
+        method: 'POST',
+        body: payload
+      })
     })
   })
 });
@@ -61,5 +68,6 @@ export const {
   useSetupPasswordMutation,
   useResendVerificationEmailMutation,
   useResendPwdSetupLinkMutation,
-  useResetPwdMutation
+  useResetPwdMutation,
+  useRegisterAdminMutation
 } = authApi;

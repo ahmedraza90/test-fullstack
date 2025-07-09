@@ -30,21 +30,50 @@ const getStudentDetail = async (id) => {
 }
 
 const addNewStudent = async (payload) => {
+    console.log('🔵 Backend Service: Raw payload received:', JSON.stringify(payload, null, 2));
+    console.log('🔵 Backend Service: Payload field types:', {
+        name: typeof payload.name,
+        email: typeof payload.email,
+        phone: typeof payload.phone,
+        gender: typeof payload.gender,
+        dob: typeof payload.dob,
+        class: typeof payload.class,
+        section: typeof payload.section,
+        roll: typeof payload.roll,
+        admissionDate: typeof payload.admissionDate,
+        currentAddress: typeof payload.currentAddress,
+        permanentAddress: typeof payload.permanentAddress,
+        fatherName: typeof payload.fatherName,
+        guardianName: typeof payload.guardianName,
+        guardianPhone: typeof payload.guardianPhone,
+        relationOfGuardian: typeof payload.relationOfGuardian,
+        systemAccess: typeof payload.systemAccess
+    });
+
     const ADD_STUDENT_AND_EMAIL_SEND_SUCCESS = "Student added and verification email sent successfully.";
     const ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL = "Student added, but failed to send verification email.";
     try {
+        console.log('🔵 Backend Service: Calling addOrUpdateStudent...');
         const result = await addOrUpdateStudent(payload);
+        console.log('🔵 Backend Service: Database result:', result);
+
         if (!result.status) {
+            console.log('🔴 Backend Service: Database operation failed:', result.message);
             throw new ApiError(500, result.message);
         }
 
+        console.log('🔵 Backend Service: Student added successfully, attempting to send email...');
         try {
-            await sendAccountVerificationEmail({ userId: result.userId, userEmail: payload.email });
+            await sendAccountVerificationEmail({ userId: result.userid || result.userId, userEmail: payload.email });
+            console.log('🔵 Backend Service: Email sent successfully');
             return { message: ADD_STUDENT_AND_EMAIL_SEND_SUCCESS };
-        } catch (error) {
-            return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL }
+        } catch (emailError) {
+            console.log('🟡 Backend Service: Email send failed:', emailError.message);
+            return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL };
         }
     } catch (error) {
+        console.error('🔴 Backend Service: Error in addNewStudent:', error);
+        console.error('🔴 Backend Service: Error stack:', error.stack);
         throw new ApiError(500, "Unable to add student");
     }
 }

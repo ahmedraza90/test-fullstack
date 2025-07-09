@@ -5,6 +5,18 @@ export const noticeStatusList: NameIdType[] = [
   { id: 2, name: 'Submit for Approval' }
 ];
 
+export const ClassesList: NameIdType[] = [
+  { id: 1, name: 'Class 1' },
+  { id: 2, name: 'Class 2' },
+  { id: 3, name: 'Class 3' }
+];
+
+export const SectionsList: NameIdType[] = [
+  { id: 1, name: 'Section A' },
+  { id: 2, name: 'Section B' },
+  { id: 3, name: 'Section C' }
+];
+
 export const genders: NameIdType[] = [
   { name: 'Male', id: 'Male' },
   { name: 'Female', id: 'Female' },

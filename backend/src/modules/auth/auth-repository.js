@@ -112,6 +112,28 @@ const setupUserPassword = async (payload) => {
     return rowCount;
 }
 
+const createAdminUser = async (payload, client) => {
+    const { name, email, hashedPassword } = payload;
+    
+    // Check if email already exists
+    const checkQuery = "SELECT id FROM users WHERE email = $1";
+    const { rows: existingUser } = await client.query(checkQuery, [email]);
+    
+    if (existingUser.length > 0) {
+        throw new Error("Email already exists");
+    }
+    
+    // Create new admin user (role_id = 1 for admin)
+    const insertQuery = `
+        INSERT INTO users (name, email, password, role_id, is_active, is_email_verified)
+        VALUES ($1, $2, $3, 1, true, true)
+        RETURNING id, name, email, role_id, is_active, is_email_verified
+    `;
+    const queryParams = [name, email, hashedPassword];
+    const { rows } = await client.query(insertQuery, queryParams);
+    return rows[0];
+}
+
 module.exports = {
     findUserByUsername,
     invalidateRefreshToken,
@@ -125,4 +147,5 @@ module.exports = {
     verifyAccountEmail,
     doesEmailExist,
     setupUserPassword,
+    createAdminUser,
 };

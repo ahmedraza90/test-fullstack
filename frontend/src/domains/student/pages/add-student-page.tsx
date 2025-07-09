@@ -18,6 +18,7 @@ import {
   AcademicInformation,
   AddressInformation,
   BasicInformation,
+  OtherInformation,
   ParentsAndGuardianInformation
 } from '../components/forms';
 
@@ -37,6 +38,8 @@ export const AddStudent = () => {
 
   const onSave = async (data: StudentProps) => {
     try {
+      console.log('🔵 Frontend: Raw form data:', JSON.stringify(data, null, 2));
+
       const { dob, admissionDate, ...rest } = data;
 
       const payload = {
@@ -45,10 +48,33 @@ export const AddStudent = () => {
         admissionDate: getFormattedDate(admissionDate, API_DATE_FORMAT)
       };
 
+      console.log('🔵 Frontend: Processed payload:', JSON.stringify(payload, null, 2));
+      console.log('🔵 Frontend: Payload field types:', {
+        name: typeof payload.name,
+        email: typeof payload.email,
+        phone: typeof payload.phone,
+        gender: typeof payload.gender,
+        dob: typeof payload.dob,
+        class: typeof payload.class,
+        section: typeof payload.section,
+        roll: typeof payload.roll,
+        admissionDate: typeof payload.admissionDate,
+        currentAddress: typeof payload.currentAddress,
+        permanentAddress: typeof payload.permanentAddress,
+        fatherName: typeof payload.fatherName,
+        guardianName: typeof payload.guardianName,
+        guardianPhone: typeof payload.guardianPhone,
+        relationOfGuardian: typeof payload.relationOfGuardian,
+        systemAccess: typeof payload.systemAccess
+      });
+
       const result = await addStudent(payload).unwrap();
+      console.log('🔵 Frontend: Success response:', result);
       toast.info(result.message);
       navigate(`/app/students`);
     } catch (error) {
+      console.error('🔴 Frontend: Full error object:', error);
+      console.error('🔴 Frontend: Error details:', JSON.stringify(error, null, 2));
       toast.error(getErrorMsg(error as FetchBaseQueryError | SerializedError).message);
     }
   };
@@ -68,6 +94,9 @@ export const AddStudent = () => {
 
           <hr />
           <AddressInformation />
+
+          <hr />
+          <OtherInformation />
 
           <hr />
           <Stack direction='row' alignItems='center' justifyContent='center' spacing={1}>

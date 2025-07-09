@@ -21,6 +21,7 @@ const {
   verifyAccountEmail,
   doesEmailExist,
   setupUserPassword,
+  createAdminUser,
 } = require("./auth-repository");
 const { v4: uuidV4 } = require("uuid");
 const { env, db } = require("../../config");
@@ -288,6 +289,51 @@ const processPwdReset = async (userId) => {
   }
 };
 
+const registerAdmin = async (payload) => {
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN");
+
+    const { name, email, password, confirmPassword } = payload;
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      throw new ApiError(400, "Passwords do not match");
+    }
+
+    // Check if email already exists
+    const existingUser = await findUserByUsername(email, client);
+    if (existingUser) {
+      throw new ApiError(400, "Email already exists");
+    }
+
+    // Hash the password
+    const hashedPassword = await generateHashedPassword(password);
+
+    // Create the admin user
+    const newUser = await createAdminUser({ name, email, hashedPassword }, client);
+    
+    // Create basic user profile
+    const profileQuery = `
+      INSERT INTO user_profiles (user_id, created_dt, updated_dt)
+      VALUES ($1, NOW(), NOW())
+    `;
+    await client.query(profileQuery, [newUser.id]);
+
+    await client.query("COMMIT");
+
+    return {
+      message: "Admin user registered successfully",
+      userId: newUser.id
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
 module.exports = {
   login,
   logout,
@@ -297,4 +343,5 @@ module.exports = {
   processResendEmailVerification,
   processResendPwdSetupLink,
   processPwdReset,
+  registerAdmin,
 };
