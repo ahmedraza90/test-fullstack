@@ -312,7 +312,7 @@ const registerAdmin = async (payload) => {
 
     // Create the admin user
     const newUser = await createAdminUser({ name, email, hashedPassword }, client);
-    
+
     // Create basic user profile
     const profileQuery = `
       INSERT INTO user_profiles (user_id, created_dt, updated_dt)

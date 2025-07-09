@@ -66,11 +66,11 @@ export const LoginPage = () => {
           isFetching={isLoading}
         />
         <ApiError messages={apiErrors} />
-        
+
         <Box sx={{ marginTop: '20px', textAlign: 'center' }}>
-          <Button 
-            variant='text' 
-            size='small' 
+          <Button
+            variant='text'
+            size='small'
             onClick={() => navigate('/auth/register-admin')}
             sx={{ textTransform: 'none' }}
           >

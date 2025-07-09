@@ -64,7 +64,7 @@ export const AdminRegisterPage = () => {
         <Typography variant='subtitle1' color='text.secondary'>
           Create a new administrator account.
         </Typography>
-        
+
         {successMessage && (
           <Box
             sx={{
@@ -85,13 +85,13 @@ export const AdminRegisterPage = () => {
           onSubmit={methods.handleSubmit(onSubmit)}
           isFetching={isLoading}
         />
-        
+
         <ApiError messages={apiErrors} />
-        
+
         <Box sx={{ marginTop: '20px', textAlign: 'center' }}>
-          <Button 
-            variant='text' 
-            size='small' 
+          <Button
+            variant='text'
+            size='small'
             onClick={handleBackToLogin}
             sx={{ textTransform: 'none' }}
           >
